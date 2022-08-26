@@ -7,12 +7,12 @@ android {
     compileSdk 31
 
     defaultConfig {
-        applicationId "dev.entao.app.inst"
+        applicationId "dev.entao.app.viewname"
         minSdk 22
         targetSdk 31
         versionCode 102
         versionName "1.02"
-        archivesBaseName = "Sweet-" + versionCode
+        archivesBaseName = "ViewName-" + versionCode
     }
 
     buildTypes {
