@@ -7,7 +7,7 @@ plugins {
 String nameGroup = "dev.entao.app"
 String nameVersion = "0.3.0"
 String nameAF = "viewname"
-String nameGithub = "viewname"
+String nameGithub = "AppViewName"
 String libDesc = 'Android library, give View a name property.'
 
 group nameGroup
