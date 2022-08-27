@@ -25,8 +25,8 @@ class MainActivity : AppCompatActivity() {
         ll.addView(tv, LinearLayout.LayoutParams(wrap, wrap))
         setContentView(ll)
 
-        Log.d("debug", numValue.toString())
+        Log.d("xlog", numValue.toString())
         numValue = 999
-        Log.d("debug", numValue.toString())
+        Log.d("xlog", numValue.toString())
     }
 }

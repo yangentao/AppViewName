@@ -5,10 +5,18 @@ plugins {
     id 'signing'
 }
 String nameGroup = "dev.entao.app"
-String nameVersion = "0.3.0"
+String nameVersion = "0.5.0"
 String nameAF = "viewname"
 String nameGithub = "AppViewName"
 String libDesc = 'Android library, give View a name property.'
+
+dependencies {
+    implementation 'androidx.core:core-ktx:1.7.0'
+    implementation 'androidx.appcompat:appcompat:1.4.0'
+//    implementation 'com.google.android.material:material:1.4.0'
+}
+
+
 
 group nameGroup
 version nameVersion
@@ -43,11 +51,7 @@ android {
     }
 }
 
-dependencies {
-    implementation 'androidx.core:core-ktx:1.7.0'
-    implementation 'androidx.appcompat:appcompat:1.4.0'
-//    implementation 'com.google.android.material:material:1.4.0'
-}
+
 
 task sourcesJar(type: Jar) {
     archiveClassifier.set('sources')
