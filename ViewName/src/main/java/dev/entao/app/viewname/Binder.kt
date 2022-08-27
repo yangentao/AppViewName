@@ -1,6 +1,6 @@
 @file:Suppress("unused")
 
-package dev.entao.app.naming
+package dev.entao.app.viewname
 
 import android.app.Activity
 import android.view.View

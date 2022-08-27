@@ -5,8 +5,8 @@ import android.util.Log
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import dev.entao.app.naming.BindInt
-import dev.entao.app.naming.name
+import dev.entao.app.viewname.BindInt
+import dev.entao.app.viewname.name
 
 class MainActivity : AppCompatActivity() {
 
