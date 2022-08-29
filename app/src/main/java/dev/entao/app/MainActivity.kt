@@ -5,12 +5,12 @@ import android.util.Log
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import dev.entao.app.viewname.BindInt
+import dev.entao.app.viewname.BindValue
 import dev.entao.app.viewname.name
 
 class MainActivity : AppCompatActivity() {
 
-    var numValue: Int by BindInt()
+    var numValue: Int by BindValue()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
