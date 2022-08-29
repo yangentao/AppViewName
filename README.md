@@ -5,8 +5,8 @@ example:
 ```kotlin
 class MainActivity : AppCompatActivity() {
     //property name equal TextView.name
-    //or, use BindInt("numValue") specify the TextView.name
-    var numValue: Int by BindInt()
+    //or, use BindValue("numValue") specify the TextView.name
+    var numValue: Int by BindValue()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

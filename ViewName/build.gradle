@@ -4,13 +4,15 @@ plugins {
 }
 ext {
     nameGroup = "dev.entao.app"
-    nameVersion = "0.6.0"
+    nameVersion = "0.6.1"
     nameAF = "viewname"
     nameGithub = "AppViewName"
     libDesc = 'Android library, give View a name property.'
 }
 //检查AndroidManifest.xml中的package
 dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib"
+    implementation "org.jetbrains.kotlin:kotlin-reflect"
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.appcompat:appcompat:1.4.0'
 //    implementation 'com.google.android.material:material:1.4.0'
