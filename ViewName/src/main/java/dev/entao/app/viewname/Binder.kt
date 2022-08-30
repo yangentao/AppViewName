@@ -1,27 +1,42 @@
-@file:Suppress("unused", "MemberVisibilityCanBePrivate")
+@file:Suppress("MemberVisibilityCanBePrivate")
 
 package dev.entao.app.viewname
 
 import android.app.Activity
 import android.view.View
-import android.widget.Checkable
 import android.widget.CompoundButton
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
+import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
+import kotlin.reflect.KProperty1
+import kotlin.reflect.full.isSubclassOf
+import kotlin.reflect.full.memberProperties
 
-
-private val LifecycleOwner.isDestroyed: Boolean get() = this.lifecycle.currentState == Lifecycle.State.DESTROYED
+const val RootViewPropertyName = "rootContentView"
 
 object BinderConfig {
-    var findViewCallback: (thisRef: LifecycleOwner, String) -> View? = { that, vname ->
-        when (that) {
-            is Activity -> that.findByName(vname)
-            is Fragment -> that.findByName(vname)
-            else -> null
-        }
+    var findRootViewCallback: ((Any) -> View?)? = null
+}
+
+private fun findRootViewByPropertyName(container: Any): View? {
+    for (p in container::class.memberProperties) {
+        if (p.name != RootViewPropertyName) continue
+        if (!(p.returnType.classifier as KClass<*>).isSubclassOf(View::class)) continue
+        return p.getter.call(container) as? View
+    }
+    return null
+}
+
+private fun findRootViewOf(obj: Any): View? {
+    BinderConfig.findRootViewCallback?.invoke(obj)?.also { return it }
+    findRootViewByPropertyName(obj)?.also { return it }
+    return when (obj) {
+        is Activity -> obj.findViewById(android.R.id.content)
+        is Fragment -> obj.view
+        else -> null
     }
 }
 
@@ -32,13 +47,18 @@ class BindValue<T : Any>(private val viewName: String? = null) {
     var onSetCallback: ((View, T) -> Unit)? = null
     var onGetCallback: ((View) -> T)? = null
 
-    private fun findView(thisRef: LifecycleOwner, property: KProperty<*>): View {
-        val vName = viewName ?: property.name
-        return BinderConfig.findViewCallback(thisRef, vName) ?: error("NO view named $vName")
+    private var realView: View? = null
+
+    private fun findView(thisRef: Any, property: KProperty<*>): View {
+        if (realView == null) {
+            val vName = viewName ?: property.name
+            realView = findRootViewOf(thisRef)?.findViewByName(vName)
+        }
+        return realView ?: error("NO view named $property")
     }
 
 
-    operator fun setValue(thisRef: LifecycleOwner, property: KProperty<*>, value: T) {
+    operator fun setValue(thisRef: Any, property: KProperty<*>, value: T) {
         val v: View = findView(thisRef, property)
         val c = onSetCallback
         if (c != null) return c(v, value)
@@ -52,7 +72,7 @@ class BindValue<T : Any>(private val viewName: String? = null) {
     }
 
     @Suppress("UNCHECKED_CAST")
-    operator fun getValue(thisRef: LifecycleOwner, property: KProperty<*>): T {
+    operator fun getValue(thisRef: Any, property: KProperty<*>): T {
         val v: View = findView(thisRef, property)
         val c = onGetCallback
         if (c != null) return c(v)
