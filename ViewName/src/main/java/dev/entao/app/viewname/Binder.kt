@@ -7,11 +7,8 @@ import android.view.View
 import android.widget.CompoundButton
 import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleOwner
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
-import kotlin.reflect.KProperty1
 import kotlin.reflect.full.isSubclassOf
 import kotlin.reflect.full.memberProperties
 
@@ -30,7 +27,7 @@ private fun findRootViewByPropertyName(container: Any): View? {
     return null
 }
 
-private fun findRootViewOf(obj: Any): View? {
+fun findRootViewOfContainer(obj: Any): View? {
     BinderConfig.findRootViewCallback?.invoke(obj)?.also { return it }
     findRootViewByPropertyName(obj)?.also { return it }
     return when (obj) {
@@ -40,7 +37,32 @@ private fun findRootViewOf(obj: Any): View? {
     }
 }
 
+
 /**
+ *  val pickView: ImageView by NamedView("pick")
+ *  if viewName is null, use property.name instead.
+ */
+class NamedView(private val viewName: String? = null) {
+    private var realView: View? = null
+
+    private fun findView(thisRef: Any, property: KProperty<*>): View {
+        if (realView == null) {
+            val vName = viewName ?: property.name
+            realView = findRootViewOfContainer(thisRef)?.findViewByName(vName)
+        }
+        return realView ?: error("NO view named $property")
+    }
+
+
+    @Suppress("UNCHECKED_CAST")
+    operator fun <T : View> getValue(thisRef: Any, property: KProperty<*>): T {
+        return findView(thisRef, property) as T
+    }
+}
+
+
+/**
+ * val userName:String by BindValue("userNameEdit")
  * Support String/Long/Int/Boolean
  */
 class BindValue<T : Any>(private val viewName: String? = null) {
@@ -52,7 +74,7 @@ class BindValue<T : Any>(private val viewName: String? = null) {
     private fun findView(thisRef: Any, property: KProperty<*>): View {
         if (realView == null) {
             val vName = viewName ?: property.name
-            realView = findRootViewOf(thisRef)?.findViewByName(vName)
+            realView = findRootViewOfContainer(thisRef)?.findViewByName(vName)
         }
         return realView ?: error("NO view named $property")
     }
